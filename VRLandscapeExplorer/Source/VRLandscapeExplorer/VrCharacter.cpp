@@ -40,11 +40,11 @@ void AVrCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AVrCharacter::MoveForward(float throttle)
 {
-	AddMovementInput(throttle * Camera->GetForwardVector());
+	AddMovementInput(Camera->GetForwardVector(), throttle);
 }
 
 void AVrCharacter::MoveRight(float throttle)
 {
-	AddMovementInput(throttle * Camera->GetRightVector());
+	AddMovementInput(Camera->GetRightVector(), throttle);
 }
 
