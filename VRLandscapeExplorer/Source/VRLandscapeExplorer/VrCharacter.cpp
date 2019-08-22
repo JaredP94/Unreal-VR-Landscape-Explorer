@@ -1,9 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "VrCharacter.h"
+
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
-
-#include "VrCharacter.h"
+#include "HeadMountedDisplay.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -12,7 +14,10 @@ AVrCharacter::AVrCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("VR Camera"));
-	Camera->SetupAttachment(GetRootComponent());
+	CameraHolder = CreateDefaultSubobject<USceneComponent>(TEXT("VR Camera Holder"));
+	CameraHolder->SetupAttachment(GetRootComponent());
+	Camera->SetupAttachment(CameraHolder);
+	CameraHolder->RelativeLocation.Set(0.f, 0.f, -90.15f);
 }
 
 // Called when the game starts or when spawned
@@ -20,6 +25,7 @@ void AVrCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 }
 
 // Called every frame
