@@ -33,7 +33,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USceneComponent* CameraHolder;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	class UStaticMeshComponent* DestinationIndicator;
+
 private:
 	void MoveForward(float throttle);
 	void MoveRight(float throttle);
+	void UpdateDestinationIndicator();
+
+private:
+	UPROPERTY(EditAnywhere)
+	float MaxTeleporationDistance = 1000;
 };

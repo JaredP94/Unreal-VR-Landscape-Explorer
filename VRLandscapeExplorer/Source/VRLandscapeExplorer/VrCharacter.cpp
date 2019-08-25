@@ -6,6 +6,8 @@
 #include "Components/InputComponent.h"
 #include "HeadMountedDisplay.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/Actor.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -18,6 +20,9 @@ AVrCharacter::AVrCharacter()
 	CameraHolder->SetupAttachment(GetRootComponent());
 	Camera->SetupAttachment(CameraHolder);
 	CameraHolder->RelativeLocation.Set(0.f, 0.f, -90.15f);
+
+	DestinationIndicator = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Destination Indicator"));
+	DestinationIndicator->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
@@ -33,6 +38,7 @@ void AVrCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UpdateDestinationIndicator();
 }
 
 // Called to bind functionality to input
@@ -52,5 +58,19 @@ void AVrCharacter::MoveForward(float throttle)
 void AVrCharacter::MoveRight(float throttle)
 {
 	AddMovementInput(Camera->GetRightVector(), throttle);
+}
+
+void AVrCharacter::UpdateDestinationIndicator()
+{
+	FHitResult HitResult;
+	FVector Start = Camera->GetComponentLocation();
+	FVector End = Start + (Camera->GetForwardVector() * MaxTeleporationDistance);
+
+	auto bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
+
+	if (bHit)
+	{
+		DestinationIndicator->SetWorldLocation(HitResult.Location);
+	}
 }
 
