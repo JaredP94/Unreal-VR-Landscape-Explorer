@@ -72,5 +72,7 @@ void AVrCharacter::UpdateDestinationIndicator()
 	{
 		DestinationIndicator->SetWorldLocation(HitResult.Location);
 	}
+
+	DestinationIndicator->SetVisibility(bHit);
 }
 
