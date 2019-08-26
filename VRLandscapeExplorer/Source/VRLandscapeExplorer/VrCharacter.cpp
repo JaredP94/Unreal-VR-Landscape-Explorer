@@ -87,8 +87,9 @@ void AVrCharacter::FinaliseTeleport()
 	if (playerController == nullptr)
 		return;
 
-	SetActorLocation(DestinationIndicator->GetComponentLocation() + FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
-	playerController->PlayerCameraManager->StopCameraFade();
+	auto TargetLocation = DestinationIndicator->GetComponentLocation();
+	SetActorLocation(FVector(TargetLocation.X, TargetLocation.Y, GetActorLocation().Z));
+	playerController->PlayerCameraManager->StartCameraFade(1.f, 0.f, TeleportationFadeDuration, FLinearColor::Black, false, false);
 }
 
 void AVrCharacter::UpdateDestinationIndicator()
