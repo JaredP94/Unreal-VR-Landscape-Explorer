@@ -85,27 +85,43 @@ void AVrCharacter::FinaliseTeleport()
 		return;
 
 	auto TargetLocation = DestinationIndicator->GetComponentLocation();
-	SetActorLocation(FVector(TargetLocation.X, TargetLocation.Y, GetActorLocation().Z));
+	SetActorLocation(FVector(TargetLocation.X, TargetLocation.Y, GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + 90.15f));
 	VrPlayerController->PlayerCameraManager->StartCameraFade(1.f, 0.f, TeleportationFadeDuration, FLinearColor::Black, false, false);
 }
 
 void AVrCharacter::UpdateDestinationIndicator()
 {
+	FVector TargetLocation;
+
+	auto bValidLocation = LocateTeleportDestination(TargetLocation);
+
+	if (bValidLocation)
+	{
+		DestinationIndicator->SetWorldLocation(TargetLocation);
+	}
+
+	DestinationIndicator->SetVisibility(bValidLocation);
+}
+
+bool AVrCharacter::LocateTeleportDestination(FVector& OutLocation)
+{
 	FHitResult HitResult;
 	auto Start = Camera->GetComponentLocation();
 	auto End = Start + (Camera->GetForwardVector() * MaxTeleporationDistance);
-
 	auto bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
+
+	if (!bHit)
+		return false;
 
 	FNavLocation NavLocation;
 	auto navSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(this);
 	bool bOnNavMesh = navSystem->ProjectPointToNavigation(HitResult.Location, NavLocation, TeleportationProjectionExtent);
 
-	if (bHit && bOnNavMesh)
-	{
-		DestinationIndicator->SetWorldLocation(NavLocation.Location);
-	}
+	if (!bOnNavMesh)
+		return false;
 
-	DestinationIndicator->SetVisibility(bHit && bOnNavMesh);
+	OutLocation = NavLocation.Location;
+
+	return true;
 }
 

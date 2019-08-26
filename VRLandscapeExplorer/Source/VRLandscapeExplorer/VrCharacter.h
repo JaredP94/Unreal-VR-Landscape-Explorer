@@ -42,6 +42,7 @@ private:
 	void InitiateTeleport();
 	void FinaliseTeleport();
 	void UpdateDestinationIndicator();
+	bool LocateTeleportDestination(FVector &OutLocation);
 
 	APlayerController* VrPlayerController;
 
