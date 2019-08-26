@@ -68,12 +68,12 @@ void AVrCharacter::MoveRight(float throttle)
 
 void AVrCharacter::InitiateTeleport()
 {
-	auto playerController = Cast<APlayerController>(GetController());
+	auto PlayerController = Cast<APlayerController>(GetController());
 
-	if (playerController == nullptr)
+	if (PlayerController == nullptr)
 		return;
 
-	playerController->PlayerCameraManager->StartCameraFade(0.f, 1.f, TeleportationFadeDuration, FLinearColor::Black, false, true);
+	PlayerController->PlayerCameraManager->StartCameraFade(0.f, 1.f, TeleportationFadeDuration, FLinearColor::Black, false, true);
 
 	FTimerHandle timerHandle;
 
@@ -82,21 +82,21 @@ void AVrCharacter::InitiateTeleport()
 
 void AVrCharacter::FinaliseTeleport()
 {
-	auto playerController = Cast<APlayerController>(GetController());
+	auto PlayerController = Cast<APlayerController>(GetController());
 
-	if (playerController == nullptr)
+	if (PlayerController == nullptr)
 		return;
 
 	auto TargetLocation = DestinationIndicator->GetComponentLocation();
 	SetActorLocation(FVector(TargetLocation.X, TargetLocation.Y, GetActorLocation().Z));
-	playerController->PlayerCameraManager->StartCameraFade(1.f, 0.f, TeleportationFadeDuration, FLinearColor::Black, false, false);
+	PlayerController->PlayerCameraManager->StartCameraFade(1.f, 0.f, TeleportationFadeDuration, FLinearColor::Black, false, false);
 }
 
 void AVrCharacter::UpdateDestinationIndicator()
 {
 	FHitResult HitResult;
-	FVector Start = Camera->GetComponentLocation();
-	FVector End = Start + (Camera->GetForwardVector() * MaxTeleporationDistance);
+	auto Start = Camera->GetComponentLocation();
+	auto End = Start + (Camera->GetForwardVector() * MaxTeleporationDistance);
 
 	auto bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
 
