@@ -49,4 +49,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float TeleportationFadeDuration = 0.5f;
+
+	UPROPERTY(EditAnywhere)
+	FVector TeleportationProjectionExtent = FVector(100.f, 100.f, 100.f);
 };

@@ -12,6 +12,7 @@
 #include "GameFramework/PlayerController.h"
 #include "TimerManager.h"
 #include "Components/CapsuleComponent.h"
+#include "NavigationSystem.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -98,11 +99,15 @@ void AVrCharacter::UpdateDestinationIndicator()
 
 	auto bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
 
-	if (bHit)
+	FNavLocation NavLocation;
+	auto navSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(this);
+	bool bOnNavMesh = navSystem->ProjectPointToNavigation(HitResult.Location, NavLocation, TeleportationProjectionExtent);
+
+	if (bHit && bOnNavMesh)
 	{
-		DestinationIndicator->SetWorldLocation(HitResult.Location);
+		DestinationIndicator->SetWorldLocation(NavLocation.Location);
 	}
 
-	DestinationIndicator->SetVisibility(bHit);
+	DestinationIndicator->SetVisibility(bHit && bOnNavMesh);
 }
 
