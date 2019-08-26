@@ -43,6 +43,8 @@ private:
 	void FinaliseTeleport();
 	void UpdateDestinationIndicator();
 
+	APlayerController* VrPlayerController;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float MaxTeleporationDistance = 1000;

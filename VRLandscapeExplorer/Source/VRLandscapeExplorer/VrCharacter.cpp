@@ -36,6 +36,8 @@ void AVrCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
+
+	VrPlayerController = Cast<APlayerController>(GetController());
 }
 
 // Called every frame
@@ -68,28 +70,23 @@ void AVrCharacter::MoveRight(float throttle)
 
 void AVrCharacter::InitiateTeleport()
 {
-	auto PlayerController = Cast<APlayerController>(GetController());
-
-	if (PlayerController == nullptr)
+	if (VrPlayerController == nullptr)
 		return;
 
-	PlayerController->PlayerCameraManager->StartCameraFade(0.f, 1.f, TeleportationFadeDuration, FLinearColor::Black, false, true);
+	VrPlayerController->PlayerCameraManager->StartCameraFade(0.f, 1.f, TeleportationFadeDuration, FLinearColor::Black, false, true);
 
 	FTimerHandle timerHandle;
-
 	GetWorldTimerManager().SetTimer(timerHandle, this, &AVrCharacter::FinaliseTeleport, TeleportationFadeDuration);
 }
 
 void AVrCharacter::FinaliseTeleport()
 {
-	auto PlayerController = Cast<APlayerController>(GetController());
-
-	if (PlayerController == nullptr)
+	if (VrPlayerController == nullptr)
 		return;
 
 	auto TargetLocation = DestinationIndicator->GetComponentLocation();
 	SetActorLocation(FVector(TargetLocation.X, TargetLocation.Y, GetActorLocation().Z));
-	PlayerController->PlayerCameraManager->StartCameraFade(1.f, 0.f, TeleportationFadeDuration, FLinearColor::Black, false, false);
+	VrPlayerController->PlayerCameraManager->StartCameraFade(1.f, 0.f, TeleportationFadeDuration, FLinearColor::Black, false, false);
 }
 
 void AVrCharacter::UpdateDestinationIndicator()
