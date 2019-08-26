@@ -8,6 +8,10 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Actor.h"
+#include "Camera/PlayerCameraManager.h"
+#include "GameFramework/PlayerController.h"
+#include "TimerManager.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -63,7 +67,27 @@ void AVrCharacter::MoveRight(float throttle)
 
 void AVrCharacter::InitiateTeleport()
 {
-	SetActorLocation(DestinationIndicator->GetComponentLocation());
+	auto playerController = Cast<APlayerController>(GetController());
+
+	if (playerController == nullptr)
+		return;
+
+	playerController->PlayerCameraManager->StartCameraFade(0.f, 1.f, TeleportationFadeDuration, FLinearColor::Black, false, true);
+
+	FTimerHandle timerHandle;
+
+	GetWorldTimerManager().SetTimer(timerHandle, this, &AVrCharacter::FinaliseTeleport, TeleportationFadeDuration);
+}
+
+void AVrCharacter::FinaliseTeleport()
+{
+	auto playerController = Cast<APlayerController>(GetController());
+
+	if (playerController == nullptr)
+		return;
+
+	SetActorLocation(DestinationIndicator->GetComponentLocation() + FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+	playerController->PlayerCameraManager->StopCameraFade();
 }
 
 void AVrCharacter::UpdateDestinationIndicator()
