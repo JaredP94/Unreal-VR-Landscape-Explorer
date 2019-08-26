@@ -39,6 +39,7 @@ protected:
 private:
 	void MoveForward(float throttle);
 	void MoveRight(float throttle);
+	void InitiateTeleport();
 	void UpdateDestinationIndicator();
 
 private:

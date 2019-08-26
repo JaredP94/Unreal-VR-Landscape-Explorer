@@ -48,6 +48,7 @@ void AVrCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &AVrCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("Right"), this, &AVrCharacter::MoveRight);
+	PlayerInputComponent->BindAction(TEXT("Teleport"), EInputEvent::IE_Released, this, &AVrCharacter::InitiateTeleport);
 }
 
 void AVrCharacter::MoveForward(float throttle)
@@ -58,6 +59,11 @@ void AVrCharacter::MoveForward(float throttle)
 void AVrCharacter::MoveRight(float throttle)
 {
 	AddMovementInput(Camera->GetRightVector(), throttle);
+}
+
+void AVrCharacter::InitiateTeleport()
+{
+	SetActorLocation(DestinationIndicator->GetComponentLocation());
 }
 
 void AVrCharacter::UpdateDestinationIndicator()
