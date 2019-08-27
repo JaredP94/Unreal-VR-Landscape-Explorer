@@ -36,6 +36,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class UStaticMeshComponent* DestinationIndicator;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Post Process")
+	class UPostProcessComponent* PostProcessComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Post Process")
+	class UMaterialInstanceDynamic* InstanceBlinkerMaterial;
+
 private:
 	void MoveForward(float throttle);
 	void MoveRight(float throttle);
@@ -55,4 +61,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	FVector TeleportationProjectionExtent = FVector(100.f, 100.f, 100.f);
+
+	UPROPERTY(EditAnywhere)
+	class UMaterialInterface* BaseBlinkerMaterial;
 };

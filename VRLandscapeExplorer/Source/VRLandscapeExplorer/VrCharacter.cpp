@@ -13,6 +13,8 @@
 #include "TimerManager.h"
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
+#include "Components/PostProcessComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -28,6 +30,9 @@ AVrCharacter::AVrCharacter()
 
 	DestinationIndicator = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Destination Indicator"));
 	DestinationIndicator->SetupAttachment(GetRootComponent());
+
+	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("Post Process Component"));
+	PostProcessComponent->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
@@ -38,6 +43,13 @@ void AVrCharacter::BeginPlay()
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 
 	VrPlayerController = Cast<APlayerController>(GetController());
+
+	if (BaseBlinkerMaterial == nullptr)
+		return;
+
+	InstanceBlinkerMaterial = UMaterialInstanceDynamic::Create(BaseBlinkerMaterial, this);
+	PostProcessComponent->AddOrUpdateBlendable(InstanceBlinkerMaterial);
+	InstanceBlinkerMaterial->SetScalarParameterValue(TEXT("Radius"), 0.25);
 }
 
 // Called every frame
