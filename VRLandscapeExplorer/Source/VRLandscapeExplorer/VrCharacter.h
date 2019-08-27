@@ -49,6 +49,7 @@ private:
 	void FinaliseTeleport();
 	void UpdateDestinationIndicator();
 	bool LocateTeleportDestination(FVector &OutLocation);
+	void UpdateBlinkers();
 
 	APlayerController* VrPlayerController;
 
@@ -64,4 +65,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* BaseBlinkerMaterial;
+
+	UPROPERTY(EditAnywhere)
+	class UCurveFloat* CurveRadiusVsVelocity;
 };

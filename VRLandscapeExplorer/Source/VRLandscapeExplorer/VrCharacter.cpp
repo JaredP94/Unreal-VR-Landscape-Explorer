@@ -49,7 +49,6 @@ void AVrCharacter::BeginPlay()
 
 	InstanceBlinkerMaterial = UMaterialInstanceDynamic::Create(BaseBlinkerMaterial, this);
 	PostProcessComponent->AddOrUpdateBlendable(InstanceBlinkerMaterial);
-	InstanceBlinkerMaterial->SetScalarParameterValue(TEXT("Radius"), 0.25);
 }
 
 // Called every frame
@@ -58,6 +57,7 @@ void AVrCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateDestinationIndicator();
+	UpdateBlinkers();
 }
 
 // Called to bind functionality to input
@@ -135,5 +135,15 @@ bool AVrCharacter::LocateTeleportDestination(FVector& OutLocation)
 	OutLocation = NavLocation.Location;
 
 	return true;
+}
+
+void AVrCharacter::UpdateBlinkers()
+{
+	if (CurveRadiusVsVelocity == nullptr)
+		return;
+
+	auto Speed = GetVelocity().Size();
+	auto Radius = CurveRadiusVsVelocity->GetFloatValue(Speed);
+	InstanceBlinkerMaterial->SetScalarParameterValue(TEXT("Radius"), Radius);
 }
 
