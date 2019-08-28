@@ -48,8 +48,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Controller")
 	class UMotionControllerComponent* LeftMotionController;
 
-	
-
 private:
 	void MoveForward(float throttle);
 	void MoveRight(float throttle);
@@ -64,7 +62,13 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere)
-	float MaxTeleporationDistance = 1000;
+	float TeleportationProjectileSpeed = 1000.f;
+
+	UPROPERTY(EditAnywhere)
+	float TeleportationProjectileRadius = 10.f;
+
+	UPROPERTY(EditAnywhere)
+	float MaxTeleportationSimulationTime = 10.f;
 
 	UPROPERTY(EditAnywhere)
 	float TeleportationFadeDuration = 0.5f;
@@ -77,4 +81,5 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UCurveFloat* CurveRadiusVsVelocity;
+
 };
