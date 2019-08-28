@@ -145,5 +145,40 @@ void AVrCharacter::UpdateBlinkers()
 	auto Speed = GetVelocity().Size();
 	auto Radius = CurveRadiusVsVelocity->GetFloatValue(Speed);
 	InstanceBlinkerMaterial->SetScalarParameterValue(TEXT("Radius"), Radius);
+
+	auto BlinkerCenterPosition = GetBlinkerCenterPosition();
+	InstanceBlinkerMaterial->SetVectorParameterValue(TEXT("CenterPosition"), FLinearColor(BlinkerCenterPosition.X, BlinkerCenterPosition.Y, 0.f));
+}
+
+FVector2D AVrCharacter::GetBlinkerCenterPosition()
+{
+	auto MovementDirection = GetVelocity().GetSafeNormal();
+
+	if (MovementDirection.IsNearlyZero() || VrPlayerController == nullptr)
+	{
+		return FVector2D(0.5f, 0.5f);
+	}
+
+	FVector WorldLocation;
+
+	if (FVector::DotProduct(Camera->GetForwardVector(), MovementDirection) > 0.f)
+	{
+		WorldLocation = Camera->GetComponentLocation() + (MovementDirection * 1000);
+	}
+	else
+	{
+		WorldLocation = Camera->GetComponentLocation() - (MovementDirection * 1000);
+	}
+	
+
+	FVector2D ScreenLocation;
+	VrPlayerController->ProjectWorldLocationToScreen(WorldLocation, ScreenLocation);
+
+	int ViewportX, ViewportY;
+	VrPlayerController->GetViewportSize(ViewportX, ViewportY);
+	ScreenLocation.X /= ViewportX;
+	ScreenLocation.Y /= ViewportY;
+
+	return ScreenLocation;
 }
 

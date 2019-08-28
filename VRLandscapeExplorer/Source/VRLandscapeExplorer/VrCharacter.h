@@ -50,6 +50,7 @@ private:
 	void UpdateDestinationIndicator();
 	bool LocateTeleportDestination(FVector &OutLocation);
 	void UpdateBlinkers();
+	FVector2D GetBlinkerCenterPosition();
 
 	APlayerController* VrPlayerController;
 
