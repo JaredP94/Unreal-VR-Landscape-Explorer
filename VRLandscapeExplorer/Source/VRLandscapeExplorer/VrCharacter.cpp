@@ -91,7 +91,7 @@ void AVrCharacter::MoveRight(float throttle)
 
 void AVrCharacter::InitiateTeleport()
 {
-	if (VrPlayerController == nullptr)
+	if (VrPlayerController == nullptr || !DestinationIndicator->IsVisible())
 		return;
 
 	VrPlayerController->PlayerCameraManager->StartCameraFade(0.f, 1.f, TeleportationFadeDuration, FLinearColor::Black, false, true);
