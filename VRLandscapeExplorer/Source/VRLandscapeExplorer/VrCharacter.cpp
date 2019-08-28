@@ -15,6 +15,7 @@
 #include "NavigationSystem.h"
 #include "Components/PostProcessComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "MotionControllerComponent.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -33,6 +34,14 @@ AVrCharacter::AVrCharacter()
 
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("Post Process Component"));
 	PostProcessComponent->SetupAttachment(GetRootComponent());
+
+	LeftMotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Left Motion Controller"));
+	LeftMotionController->SetupAttachment(CameraHolder);
+	LeftMotionController->SetTrackingSource(EControllerHand::Left);
+
+	RightMotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Right Motion Controller"));
+	RightMotionController->SetupAttachment(CameraHolder);
+	RightMotionController->SetTrackingSource(EControllerHand::Right);
 }
 
 // Called when the game starts or when spawned
@@ -118,8 +127,8 @@ void AVrCharacter::UpdateDestinationIndicator()
 bool AVrCharacter::LocateTeleportDestination(FVector& OutLocation)
 {
 	FHitResult HitResult;
-	auto Start = Camera->GetComponentLocation();
-	auto End = Start + (Camera->GetForwardVector() * MaxTeleporationDistance);
+	auto Start = RightMotionController->GetComponentLocation();
+	auto End = Start + (RightMotionController->GetForwardVector() * MaxTeleporationDistance);
 	auto bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
 
 	if (!bHit)

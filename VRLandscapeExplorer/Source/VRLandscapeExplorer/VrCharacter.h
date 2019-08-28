@@ -42,6 +42,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Post Process")
 	class UMaterialInstanceDynamic* InstanceBlinkerMaterial;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Controller")
+	class UMotionControllerComponent* RightMotionController;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Controller")
+	class UMotionControllerComponent* LeftMotionController;
+
+	
+
 private:
 	void MoveForward(float throttle);
 	void MoveRight(float throttle);
