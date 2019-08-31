@@ -66,13 +66,13 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere)
-	float TeleportationProjectileSpeed = 1000.f;
+	float TeleportationProjectileSpeed = 750.f;
 
 	UPROPERTY(EditAnywhere)
 	float TeleportationProjectileRadius = 10.f;
 
 	UPROPERTY(EditAnywhere)
-	float MaxTeleportationSimulationTime = 10.f;
+	float MaxTeleportationSimulationTime = 2.f;
 
 	UPROPERTY(EditAnywhere)
 	float TeleportationFadeDuration = 0.5f;
