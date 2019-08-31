@@ -17,6 +17,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "MotionControllerComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SplineComponent.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -43,6 +44,9 @@ AVrCharacter::AVrCharacter()
 	RightMotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Right Motion Controller"));
 	RightMotionController->SetupAttachment(CameraHolder);
 	RightMotionController->SetTrackingSource(EControllerHand::Right);
+
+	TeleportPredictionPath = CreateDefaultSubobject<USplineComponent>(TEXT("Teleport Prediction Path"));
+	TeleportPredictionPath->SetupAttachment(RightMotionController);
 }
 
 // Called when the game starts or when spawned
@@ -113,19 +117,21 @@ void AVrCharacter::FinaliseTeleport()
 
 void AVrCharacter::UpdateDestinationIndicator()
 {
+	TArray<FVector> TargetPath;
 	FVector TargetLocation;
 
-	auto bValidLocation = LocateTeleportDestination(TargetLocation);
+	auto bValidLocation = LocateTeleportDestination(TargetPath, TargetLocation);
 
 	if (bValidLocation)
 	{
 		DestinationIndicator->SetWorldLocation(TargetLocation);
+		UpdateSpline(TargetPath);
 	}
 
 	DestinationIndicator->SetVisibility(bValidLocation);
 }
 
-bool AVrCharacter::LocateTeleportDestination(FVector& OutLocation)
+bool AVrCharacter::LocateTeleportDestination(TArray<FVector>& OutPath, FVector& OutLocation)
 {
 	auto Start = RightMotionController->GetComponentLocation();
 	auto Angle = RightMotionController->GetForwardVector();
@@ -144,6 +150,11 @@ bool AVrCharacter::LocateTeleportDestination(FVector& OutLocation)
 
 	if (!bHit)
 		return false;
+
+	for (auto PathPoint : PathResult.PathData)
+	{
+		OutPath.Emplace(PathPoint.Location);
+	}
 
 	FNavLocation NavLocation;
 	auto navSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(this);
@@ -168,6 +179,11 @@ void AVrCharacter::UpdateBlinkers()
 
 	auto BlinkerCenterPosition = GetBlinkerCenterPosition();
 	InstanceBlinkerMaterial->SetVectorParameterValue(TEXT("CenterPosition"), FLinearColor(BlinkerCenterPosition.X, BlinkerCenterPosition.Y, 0.f));
+}
+
+void AVrCharacter::UpdateSpline(const TArray<FVector>& TargetPath)
+{
+	TeleportPredictionPath->SetSplinePoints(TargetPath, ESplineCoordinateSpace::World);
 }
 
 FVector2D AVrCharacter::GetBlinkerCenterPosition()
