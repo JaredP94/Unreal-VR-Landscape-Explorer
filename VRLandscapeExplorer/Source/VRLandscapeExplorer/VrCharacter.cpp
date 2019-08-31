@@ -144,7 +144,7 @@ bool AVrCharacter::LocateTeleportDestination(TArray<FVector>& OutPath, FVector& 
 		ECollisionChannel::ECC_Camera,
 		this
 	);
-	PathParams.DrawDebugType = EDrawDebugTrace::ForOneFrame;
+
 	FPredictProjectilePathResult PathResult;
 	auto bHit = UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);
 
