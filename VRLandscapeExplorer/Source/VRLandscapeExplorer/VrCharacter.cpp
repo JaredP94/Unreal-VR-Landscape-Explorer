@@ -191,6 +191,11 @@ void AVrCharacter::DrawTeleportationPath(const TArray<FVector>& TargetPath)
 {
 	UpdateSpline(TargetPath);
 
+	for (auto SplineMesh : TeleportationPathMeshes)
+	{
+		SplineMesh->SetVisibility(false);
+	}
+
 	for (auto i = 0; i < TargetPath.Num() - 1; i++)
 	{
 		if (TeleportationPathMeshes.Num() <= i)
@@ -206,6 +211,7 @@ void AVrCharacter::DrawTeleportationPath(const TArray<FVector>& TargetPath)
 		}
 
 		USplineMeshComponent* RuntimeMesh = TeleportationPathMeshes[i];
+		RuntimeMesh->SetVisibility(true);
 
 		FVector StartPosition, EndPosition, StartTangent, EndTangent;
 		TeleportPredictionPath->GetLocalLocationAndTangentAtSplinePoint(i, StartPosition, StartTangent);
