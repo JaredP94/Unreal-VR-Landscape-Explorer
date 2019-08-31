@@ -118,6 +118,7 @@ void AVrCharacter::FinaliseTeleport()
 
 void AVrCharacter::UpdateDestinationIndicator()
 {
+	TArray<FVector> EmptyPath;
 	TArray<FVector> TargetPath;
 	FVector TargetLocation;
 
@@ -126,8 +127,9 @@ void AVrCharacter::UpdateDestinationIndicator()
 	if (bValidLocation)
 	{
 		DestinationIndicator->SetWorldLocation(TargetLocation);
-		DrawTeleportationPath(TargetPath);
 	}
+
+	DrawTeleportationPath(bValidLocation ? TargetPath : EmptyPath);
 
 	DestinationIndicator->SetVisibility(bValidLocation);
 }
