@@ -36,8 +36,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class UStaticMeshComponent* DestinationIndicator;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Teleportation")
 	class USplineComponent* TeleportPredictionPath;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Teleportation")
+	TArray<class UStaticMeshComponent*> TeleportationPathMeshes;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Post Process")
 	class UPostProcessComponent* PostProcessComponent;
@@ -60,6 +63,7 @@ private:
 	bool LocateTeleportDestination(TArray<FVector> &OutPath, FVector &OutLocation);
 	void UpdateBlinkers();
 	void UpdateSpline(const TArray<FVector> &TargetPath);
+	void DrawTeleportationPath(const TArray<FVector>& TargetPath);
 	FVector2D GetBlinkerCenterPosition();
 
 	APlayerController* VrPlayerController;
@@ -85,5 +89,11 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UCurveFloat* CurveRadiusVsVelocity;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMesh* TeleportationPathMesh;
+
+	UPROPERTY(EditAnywhere)
+	class UMaterialInterface* TeleportationPathMaterial;
 
 };

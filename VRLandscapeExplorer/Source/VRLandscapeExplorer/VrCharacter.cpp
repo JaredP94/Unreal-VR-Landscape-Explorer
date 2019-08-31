@@ -125,7 +125,7 @@ void AVrCharacter::UpdateDestinationIndicator()
 	if (bValidLocation)
 	{
 		DestinationIndicator->SetWorldLocation(TargetLocation);
-		UpdateSpline(TargetPath);
+		DrawTeleportationPath(TargetPath);
 	}
 
 	DestinationIndicator->SetVisibility(bValidLocation);
@@ -184,6 +184,29 @@ void AVrCharacter::UpdateBlinkers()
 void AVrCharacter::UpdateSpline(const TArray<FVector>& TargetPath)
 {
 	TeleportPredictionPath->SetSplinePoints(TargetPath, ESplineCoordinateSpace::World);
+}
+
+void AVrCharacter::DrawTeleportationPath(const TArray<FVector>& TargetPath)
+{
+	UpdateSpline(TargetPath);
+
+	for (auto i = 0; i < TargetPath.Num(); i++)
+	{
+		if (TeleportationPathMeshes.Num() <= i)
+		{
+			UStaticMeshComponent* RuntimeMesh = NewObject<UStaticMeshComponent>(this);
+			RuntimeMesh->AttachToComponent(CameraHolder, FAttachmentTransformRules::KeepRelativeTransform);
+			RuntimeMesh->SetStaticMesh(TeleportationPathMesh);
+			RuntimeMesh->SetMaterial(0, TeleportationPathMaterial);
+			RuntimeMesh->RegisterComponent();
+
+			TeleportationPathMeshes.Add(RuntimeMesh);
+		}
+
+		UStaticMeshComponent* RuntimeMesh = TeleportationPathMeshes[i];
+
+		RuntimeMesh->SetWorldLocation(TargetPath[i]);
+	}
 }
 
 FVector2D AVrCharacter::GetBlinkerCenterPosition()
