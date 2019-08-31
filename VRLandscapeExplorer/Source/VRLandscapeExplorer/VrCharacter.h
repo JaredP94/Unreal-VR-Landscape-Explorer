@@ -40,7 +40,7 @@ protected:
 	class USplineComponent* TeleportPredictionPath;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Teleportation")
-	TArray<class UStaticMeshComponent*> TeleportationPathMeshes;
+	TArray<class USplineMeshComponent*> TeleportationPathMeshes;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Post Process")
 	class UPostProcessComponent* PostProcessComponent;

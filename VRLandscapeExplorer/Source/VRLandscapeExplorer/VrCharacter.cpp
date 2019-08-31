@@ -18,6 +18,7 @@
 #include "MotionControllerComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
 
 // Sets default values
 AVrCharacter::AVrCharacter()
@@ -190,12 +191,13 @@ void AVrCharacter::DrawTeleportationPath(const TArray<FVector>& TargetPath)
 {
 	UpdateSpline(TargetPath);
 
-	for (auto i = 0; i < TargetPath.Num(); i++)
+	for (auto i = 0; i < TargetPath.Num() - 1; i++)
 	{
 		if (TeleportationPathMeshes.Num() <= i)
 		{
-			UStaticMeshComponent* RuntimeMesh = NewObject<UStaticMeshComponent>(this);
-			RuntimeMesh->AttachToComponent(CameraHolder, FAttachmentTransformRules::KeepRelativeTransform);
+			USplineMeshComponent* RuntimeMesh = NewObject<USplineMeshComponent>(this);
+			RuntimeMesh->SetMobility(EComponentMobility::Movable);
+			RuntimeMesh->AttachToComponent(TeleportPredictionPath, FAttachmentTransformRules::KeepRelativeTransform);
 			RuntimeMesh->SetStaticMesh(TeleportationPathMesh);
 			RuntimeMesh->SetMaterial(0, TeleportationPathMaterial);
 			RuntimeMesh->RegisterComponent();
@@ -203,9 +205,12 @@ void AVrCharacter::DrawTeleportationPath(const TArray<FVector>& TargetPath)
 			TeleportationPathMeshes.Add(RuntimeMesh);
 		}
 
-		UStaticMeshComponent* RuntimeMesh = TeleportationPathMeshes[i];
+		USplineMeshComponent* RuntimeMesh = TeleportationPathMeshes[i];
 
-		RuntimeMesh->SetWorldLocation(TargetPath[i]);
+		FVector StartPosition, EndPosition, StartTangent, EndTangent;
+		TeleportPredictionPath->GetLocalLocationAndTangentAtSplinePoint(i, StartPosition, StartTangent);
+		TeleportPredictionPath->GetLocalLocationAndTangentAtSplinePoint(i + 1, EndPosition, EndTangent);
+		RuntimeMesh->SetStartAndEnd(StartPosition, StartTangent, EndPosition, EndTangent);
 	}
 }
 
