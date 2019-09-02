@@ -49,10 +49,10 @@ protected:
 	class UMaterialInstanceDynamic* InstanceBlinkerMaterial;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Controller")
-	class UMotionControllerComponent* RightMotionController;
+	class AVrController* RightMotionController;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Controller")
-	class UMotionControllerComponent* LeftMotionController;
+	class AVrController* LeftMotionController;
 
 private:
 	void MoveForward(float throttle);
@@ -95,5 +95,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* TeleportationPathMaterial;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AVrController> MotionControllerClass;
 
 };

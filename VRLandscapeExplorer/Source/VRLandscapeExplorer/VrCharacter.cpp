@@ -2,6 +2,8 @@
 
 #include "VrCharacter.h"
 
+#include "VrController.h"
+
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "HeadMountedDisplay.h"
@@ -15,7 +17,6 @@
 #include "NavigationSystem.h"
 #include "Components/PostProcessComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
-#include "MotionControllerComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
@@ -38,16 +39,8 @@ AVrCharacter::AVrCharacter()
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("Post Process Component"));
 	PostProcessComponent->SetupAttachment(GetRootComponent());
 
-	LeftMotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Left Motion Controller"));
-	LeftMotionController->SetupAttachment(CameraHolder);
-	LeftMotionController->SetTrackingSource(EControllerHand::Left);
-
-	RightMotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Right Motion Controller"));
-	RightMotionController->SetupAttachment(CameraHolder);
-	RightMotionController->SetTrackingSource(EControllerHand::Right);
-
 	TeleportPredictionPath = CreateDefaultSubobject<USplineComponent>(TEXT("Teleport Prediction Path"));
-	TeleportPredictionPath->SetupAttachment(RightMotionController);
+	TeleportPredictionPath->SetupAttachment(CameraHolder);
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +57,24 @@ void AVrCharacter::BeginPlay()
 
 	InstanceBlinkerMaterial = UMaterialInstanceDynamic::Create(BaseBlinkerMaterial, this);
 	PostProcessComponent->AddOrUpdateBlendable(InstanceBlinkerMaterial);
+
+	LeftMotionController = GetWorld()->SpawnActor<AVrController>(MotionControllerClass);
+
+	if (LeftMotionController != nullptr)
+	{
+		LeftMotionController->AttachToComponent(CameraHolder, FAttachmentTransformRules::KeepRelativeTransform);
+		LeftMotionController->SetHandOrientation(EControllerHand::Left);
+		LeftMotionController->SetOwner(this);
+	}
+
+	RightMotionController = GetWorld()->SpawnActor<AVrController>(MotionControllerClass);
+
+	if (RightMotionController != nullptr)
+	{
+		RightMotionController->AttachToComponent(CameraHolder, FAttachmentTransformRules::KeepRelativeTransform);
+		RightMotionController->SetHandOrientation(EControllerHand::Right);
+		RightMotionController->SetOwner(this);
+	}
 }
 
 // Called every frame
@@ -136,8 +147,8 @@ void AVrCharacter::UpdateDestinationIndicator()
 
 bool AVrCharacter::LocateTeleportDestination(TArray<FVector>& OutPath, FVector& OutLocation)
 {
-	auto Start = RightMotionController->GetComponentLocation();
-	auto Angle = RightMotionController->GetForwardVector();
+	auto Start = LeftMotionController->GetActorLocation();
+	auto Angle = LeftMotionController->GetActorForwardVector();
 	
 	auto PathParams = FPredictProjectilePathParams(
 		TeleportationProjectileRadius,
