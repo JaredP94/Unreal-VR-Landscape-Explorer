@@ -4,6 +4,7 @@
 #include "VrController.h"
 
 #include "MotionControllerComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 AVrController::AVrController()
@@ -17,8 +18,21 @@ AVrController::AVrController()
 
 void AVrController::SetHandOrientation(EControllerHand TargetHand)
 {
-
 	MotionController->SetTrackingSource(TargetHand);
+
+	// Flip default mesh to match right controller
+	if (TargetHand == EControllerHand::Right)
+	{
+		TArray<UStaticMeshComponent*> StaticMeshComponents;
+		this->GetComponents<UStaticMeshComponent>(StaticMeshComponents);
+
+		for (auto Component : StaticMeshComponents)
+		{
+			Component->SetWorldScale3D(FVector(1, -1, 1));
+			Component->SetRelativeScale3D(FVector(1, -1, 1));
+			Component->ReregisterComponent();
+		}
+	}
 }
 
 // Called when the game starts or when spawned
