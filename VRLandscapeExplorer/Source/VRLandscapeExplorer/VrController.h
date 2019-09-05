@@ -28,4 +28,15 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "VR Controller")
 	class UMotionControllerComponent* MotionController;
+
+private:
+	UFUNCTION()
+	void HandleOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+	void HandleOnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	bool CanClimb() const;
+
+	bool bCanClimb = false;
 };

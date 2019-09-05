@@ -40,6 +40,7 @@ void AVrController::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	OnActorBeginOverlap.AddDynamic(this, &AVrController::HandleOnActorBeginOverlap);
 }
 
 // Called every frame
@@ -47,5 +48,38 @@ void AVrController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AVrController::HandleOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	auto bClimbable = CanClimb();
+
+	if (!bCanClimb && bClimbable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can Climb!"));
+	}
+
+	bCanClimb = bClimbable;
+}
+
+void AVrController::HandleOnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	bCanClimb = CanClimb();
+}
+
+bool AVrController::CanClimb() const
+{
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors);
+
+	for (auto OverlappingActor : OverlappingActors)
+	{
+		if (OverlappingActor->ActorHasTag(TEXT("Climbable")))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
