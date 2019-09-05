@@ -5,6 +5,7 @@
 
 #include "MotionControllerComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/PlayerController.h"
 
 // Sets default values
 AVrController::AVrController()
@@ -56,7 +57,17 @@ void AVrController::HandleOnActorBeginOverlap(AActor* OverlappedActor, AActor* O
 
 	if (!bCanClimb && bClimbable)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Can Climb!"));
+		auto ParentPawn = Cast<APawn>(this->GetAttachParentActor());
+
+		if (ParentPawn != nullptr)
+		{
+			auto PlayerController = Cast<APlayerController>(ParentPawn->GetController());
+
+			if (PlayerController != nullptr)
+			{
+				PlayerController->PlayHapticEffect(HapticFeedbackEffect, MotionController->GetTrackingSource());
+			}
+		}
 	}
 
 	bCanClimb = bClimbable;

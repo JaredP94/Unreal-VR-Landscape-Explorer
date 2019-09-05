@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "VR Controller")
 	class UMotionControllerComponent* MotionController;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Haptic Feedback")
+	class UHapticFeedbackEffect_Base* HapticFeedbackEffect;
+
 private:
 	UFUNCTION()
 	void HandleOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
