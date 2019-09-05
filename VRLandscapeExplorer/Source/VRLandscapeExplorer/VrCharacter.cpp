@@ -75,6 +75,8 @@ void AVrCharacter::BeginPlay()
 		RightMotionController->SetHandOrientation(EControllerHand::Right);
 		RightMotionController->SetOwner(this);
 	}
+
+	LeftMotionController->PairAdjacentController(RightMotionController);
 }
 
 // Called every frame

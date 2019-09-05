@@ -6,6 +6,8 @@
 #include "MotionControllerComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AVrController::AVrController()
@@ -45,12 +47,31 @@ void AVrController::Grip()
 	{
 		bIsClimbing = true;
 		ClimbInitiationLocation = GetActorLocation();
+
+		PairedController->bIsClimbing = false;
+
+		auto Character = Cast<ACharacter>(GetAttachParentActor());
+
+		if (Character == nullptr)
+			return;
+
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 	}
 }
 
 void AVrController::Release()
 {
-	bIsClimbing = false;
+	if (bIsClimbing)
+	{
+		bIsClimbing = false;
+
+		auto Character = Cast<ACharacter>(GetAttachParentActor());
+
+		if (Character == nullptr)
+			return;
+
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -98,6 +119,12 @@ void AVrController::HandleOnActorBeginOverlap(AActor* OverlappedActor, AActor* O
 void AVrController::HandleOnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
 	bCanClimb = CanClimb();
+}
+
+void AVrController::PairAdjacentController(AVrController* AdjacentController)
+{
+	PairedController = AdjacentController;
+	PairedController->PairedController = this;
 }
 
 bool AVrController::CanClimb() const

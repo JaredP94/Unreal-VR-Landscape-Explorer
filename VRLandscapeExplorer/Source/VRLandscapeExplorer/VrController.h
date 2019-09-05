@@ -15,6 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	AVrController();
 
+	void PairAdjacentController(AVrController* AdjacentController);
 	void SetHandOrientation(EControllerHand TargetHand);
 	void Grip();
 	void Release();
@@ -43,6 +44,7 @@ private:
 
 	bool CanClimb() const;
 
+	AVrController* PairedController;
 	bool bCanClimb = false;
 	bool bIsClimbing = false;
 	FVector ClimbInitiationLocation;
