@@ -36,6 +36,23 @@ void AVrController::SetHandOrientation(EControllerHand TargetHand)
 	}
 }
 
+void AVrController::Grip()
+{
+	if (!bCanClimb) 
+		return;
+
+	if (!bIsClimbing)
+	{
+		bIsClimbing = true;
+		ClimbInitiationLocation = GetActorLocation();
+	}
+}
+
+void AVrController::Release()
+{
+	bIsClimbing = false;
+}
+
 // Called when the game starts or when spawned
 void AVrController::BeginPlay()
 {
@@ -49,6 +66,11 @@ void AVrController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bIsClimbing)
+	{
+		auto HandControllerDelta = GetActorLocation() - ClimbInitiationLocation;
+		GetAttachParentActor()->AddActorWorldOffset(-HandControllerDelta);
+	}
 }
 
 void AVrController::HandleOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)

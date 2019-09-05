@@ -94,6 +94,10 @@ void AVrCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &AVrCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("Right"), this, &AVrCharacter::MoveRight);
 	PlayerInputComponent->BindAction(TEXT("Teleport"), EInputEvent::IE_Released, this, &AVrCharacter::InitiateTeleport);
+	PlayerInputComponent->BindAction(TEXT("Grip_Left"), EInputEvent::IE_Pressed, this, &AVrCharacter::GripLeft);
+	PlayerInputComponent->BindAction(TEXT("Grip_Right"), EInputEvent::IE_Pressed, this, &AVrCharacter::GripRight);
+	PlayerInputComponent->BindAction(TEXT("Grip_Left"), EInputEvent::IE_Released, this, &AVrCharacter::ReleaseLeft);
+	PlayerInputComponent->BindAction(TEXT("Grip_Right"), EInputEvent::IE_Released, this, &AVrCharacter::ReleaseRight);
 }
 
 void AVrCharacter::MoveForward(float throttle)
@@ -104,6 +108,26 @@ void AVrCharacter::MoveForward(float throttle)
 void AVrCharacter::MoveRight(float throttle)
 {
 	AddMovementInput(Camera->GetRightVector(), throttle);
+}
+
+void AVrCharacter::GripLeft()
+{
+	LeftMotionController->Grip();
+}
+
+void AVrCharacter::GripRight()
+{
+	RightMotionController->Grip();
+}
+
+void AVrCharacter::ReleaseLeft()
+{
+	LeftMotionController->Release();
+}
+
+void AVrCharacter::ReleaseRight()
+{
+	RightMotionController->Release();
 }
 
 void AVrCharacter::InitiateTeleport()

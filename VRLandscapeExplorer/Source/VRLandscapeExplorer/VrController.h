@@ -16,6 +16,8 @@ public:
 	AVrController();
 
 	void SetHandOrientation(EControllerHand TargetHand);
+	void Grip();
+	void Release();
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,4 +44,6 @@ private:
 	bool CanClimb() const;
 
 	bool bCanClimb = false;
+	bool bIsClimbing = false;
+	FVector ClimbInitiationLocation;
 };

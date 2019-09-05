@@ -57,6 +57,10 @@ protected:
 private:
 	void MoveForward(float throttle);
 	void MoveRight(float throttle);
+	void GripLeft();
+	void GripRight();
+	void ReleaseLeft();
+	void ReleaseRight();
 	void InitiateTeleport();
 	void FinaliseTeleport();
 	void UpdateDestinationIndicator();
